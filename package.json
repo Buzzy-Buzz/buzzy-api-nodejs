@@ -1,0 +1,23 @@
+{
+  "name": "buzzy-api-nodejs",
+  "version": "1.0.1",
+  "description": "boilerplate nodejs functions to call the Buzzy API",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Buzzy-Buzz/buzzy-api-nodejs.git"
+  },
+  "author": "Adam Ginsburg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Buzzy-Buzz/buzzy-api-nodejs/issues"
+  },
+  "homepage": "https://github.com/Buzzy-Buzz/buzzy-api-nodejs#readme",
+  "dependencies": {
+    "axios": "^1.6.5",
+    "bottleneck": "^2.19.5"
+  }
+}
