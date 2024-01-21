@@ -145,10 +145,7 @@ async function getMicroAppData({
   const response = await axios(params);
 
   const { body = {} } = response.data || {};
-  console.log(
-    "post axios getMicroAppData body.microAppRows.length",
-    body?.microAppRows?.length
-  );
+
   return body.microAppRows || [];
 }
 
@@ -222,7 +219,6 @@ function updateMicroAppDataRow({ rowID, authToken, userId, url, rowData }) {
     .catch((e) => log(e) || {})
     .then((response) => {
       const { data } = response || {};
-      log(data);
       return true;
     });
 }
