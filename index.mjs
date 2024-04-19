@@ -70,6 +70,72 @@ function getRequestParams(authToken, userId) {
 const getRequestParamsWrapped = limiter.wrap(getRequestParams);
 
 /**
+ * Inserts a new organization into the database.
+ * @param {Object} params - The parameters for the organization insertion.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ *  @param {string} params.url - The URL to the API endpoint.
+ * @param {Object} params.organizationInfo - The organization information to be inserted.
+ *  example: {
+ * _id: optional "Organization ID",
+ *   name: "Organization Name",
+ *  description: "Organization Description",
+ * }
+ * @returns {Promise<Object>} A promise that resolves to the response body, containing  organzation ID.
+ */
+
+async function insertOrganization({
+  authToken,
+  userId,
+  url,
+  organizationInfo,
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/insertorganization`,
+    data: {
+      organizationInfo,
+    },
+  });
+
+  const response = await axios(params);
+
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const insertOrganizationWrapped = limiter.wrap(insertOrganization);
+
+/**
+ * Inserts a new team into the database.
+ * @param {Object} params - The parameters for the team insertion.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ *  @param {string} params.url - The URL to the API endpoint.
+ * @param {Object} params.teamInfo - The organization information to be inserted.
+ *  example: {
+ *   name: "Team Name",
+ *   organizationId: "Organization ID", // of the organization the team belongs to
+ * }
+ * @returns {Promise<Object>} A promise that resolves to the response body, containing details of the inserted team.
+ */
+
+async function insertTeam({ authToken, userId, url, teamInfo }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/insertteam`,
+    data: {
+      teamInfo,
+    },
+  });
+
+  const response = await axios(params);
+
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const insertTeamWrapped = limiter.wrap(insertOrganization);
+
+/**
  * Inserts a new row into a specified Micro App.
  * @param {Object} params - The parameters for the Datatable (Microapp) row insertion.
  * @param {string} params.microAppID - The ID of the Datatable (Microapp).
@@ -132,6 +198,7 @@ async function getMicroAppData({
   optSearchFilters = null,
   searchFilter = null,
   optViewFilters = null,
+  viewFilterIsMongoQuery = false,
 }) {
   const params = Object.assign(getRequestParams(authToken, userId), {
     url: `${url}/api/microappdata`,
@@ -160,7 +227,7 @@ const getMicroAppDataWrapped = limiter.wrap(getMicroAppData);
  * @returns {Promise<Object>} A promise that resolves to the specified row from the Datatable (Microapp), or an empty object if the row is not found.
  */
 
-function getMicroAppDataRow(rowID, authToken, userId, url) {
+function getMicroAppDataRow({ rowID, authToken, userId, url }) {
   return axios({
     ...getRequestParams(authToken, userId),
     url: `${url}/api/microappdata/row`,
@@ -249,5 +316,9 @@ export {
   removeMicroAppRowWrapped,
   updateMicroAppDataRow,
   updateMicroAppDataRowWrapped,
+  insertOrganization,
+  insertOrganizationWrapped,
+  insertTeam,
+  insertTeamWrapped,
   errorResponse,
 };
