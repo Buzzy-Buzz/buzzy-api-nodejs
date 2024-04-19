@@ -1,6 +1,6 @@
 {
   "name": "buzzy-api-nodejs",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "boilerplate nodejs functions to call the Buzzy API",
   "main": "index.mjs",
   "scripts": {
