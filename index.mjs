@@ -136,6 +136,53 @@ async function insertTeam({ authToken, userId, url, teamInfo }) {
 const insertTeamWrapped = limiter.wrap(insertOrganization);
 
 /**
+ * Inserts a new teammembers into the team.
+ * @param {Object} params - The parameters for the team insertion.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {Object} params.teamIDs - The team IDs for the users to  be inserted into.
+ * @param {Object} params.emails - array of  emails of the users to be inserted into the team.
+ * @param {Object} params.userIDs - array of user IDs of the users to be inserted into the team.
+ * @param {Object} params.targetInitialApp - The initial app to be opened when the user logs in.
+ * @param {Object} params.targetInitialScreen - The initial screen to be opened when the user logs in.
+ * @param {Object} params.targetRoute - The route to be opened when the user logs in.
+ * 
+ 
+*/
+
+async function insertTeamMembers({
+  authToken,
+  userId,
+  url,
+  teamIDs,
+  emails,
+  userIDs,
+  targetInitialApp,
+  targetInitialScreen,
+  targetRoute = "app",
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/insertteammembers`,
+    data: {
+      teamIDs,
+      emails,
+      userIDs,
+      targetInitialApp,
+      targetInitialScreen,
+      targetRoute,
+    },
+  });
+
+  const response = await axios(params);
+
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const insertTeamMembersWrapped = limiter.wrap(insertOrganization);
+
+/**
  * Inserts a new row into a specified Micro App.
  * @param {Object} params - The parameters for the Datatable (Microapp) row insertion.
  * @param {string} params.microAppID - The ID of the Datatable (Microapp).
@@ -320,5 +367,7 @@ export {
   insertOrganizationWrapped,
   insertTeam,
   insertTeamWrapped,
+  insertTeamMembers,
+  insertTeamMembersWrapped,
   errorResponse,
 };
