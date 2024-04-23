@@ -134,7 +134,31 @@ async function insertTeam({ authToken, userId, url, teamInfo }) {
 }
 
 const insertTeamWrapped = limiter.wrap(insertOrganization);
+/**
+ * Find userID bsaed on email.
+ * @param {Object} params - The parameters for the team insertion.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {Object} params.email - The email of the user to be inserted into the team.
+ *
+ */
 
+async function getUserID({ authToken, userId, url, email }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/userid`,
+    data: {
+      email,
+    },
+  });
+
+  const response = await axios(params);
+
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const getUserIDWrapped = limiter.wrap(getUserID);
 /**
  * Inserts a new teammembers into the team.
  * @param {Object} params - The parameters for the team insertion.
@@ -352,6 +376,8 @@ function errorResponse(err) {
 
 export {
   login,
+  getUserID,
+  getUserIDWrapped,
   log,
   insertMicroAppRow,
   insertMicroAppRowWrapped,
