@@ -345,14 +345,22 @@ const removeMicroAppRowWrapped = limiter.wrap(removeMicroAppRow);
  * @param {string} params.userId - The user ID of the individual performing the update.
  * @param {string} params.url - The URL to the Datatable (Microapp) API endpoint.
  * @param {Object} params.rowData - The new data to be updated in the row.
+ * @param {Object} params.creatorID - The Buzzy User ID of the user who created the row.
  * @returns {Promise<boolean>} A promise that resolves to a boolean indicating the success of the update operation.
  */
 
-function updateMicroAppDataRow({ rowID, authToken, userId, url, rowData }) {
+function updateMicroAppDataRow({
+  rowID,
+  authToken,
+  userId,
+  url,
+  rowData,
+  creatorID,
+}) {
   return axios({
     ...getRequestParams(authToken, userId),
     url: `${url}/api/updatemicroapprow`,
-    data: { rowID, rowData },
+    data: { rowID, rowData, userID: creatorID },
   })
     .catch((e) => log(e) || {})
     .then((response) => {
