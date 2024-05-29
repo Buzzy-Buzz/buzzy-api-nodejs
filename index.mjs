@@ -119,11 +119,12 @@ const insertOrganizationWrapped = limiter.wrap(insertOrganization);
  * @returns {Promise<Object>} A promise that resolves to the response body, containing details of the inserted team.
  */
 
-async function insertTeam({ authToken, userId, url, teamInfo }) {
+async function insertTeam({ authToken, userId, url, teamInfo, adminID }) {
   const params = Object.assign(getRequestParams(authToken, userId), {
     url: `${url}/api/insertteam`,
     data: {
       teamInfo,
+      adminID,
     },
   });
 
