@@ -271,6 +271,9 @@ async function getMicroAppData({
   searchFilter = null,
   optViewFilters = null,
   viewFilterIsMongoQuery = false,
+  optIsVectorSearch = false,
+  optVectorSearchString,
+  optLimit,
 }) {
   const params = Object.assign(getRequestParams(authToken, userId), {
     url: `${url}/api/microappdata`,
@@ -279,6 +282,9 @@ async function getMicroAppData({
       optSearchFilters,
       searchFilter,
       optViewFilters,
+      optIsVectorSearch,
+      optVectorSearchString,
+      optLimit,
     },
   });
   const response = await axios(params);
