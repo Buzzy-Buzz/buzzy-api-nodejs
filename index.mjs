@@ -134,7 +134,7 @@ async function insertTeam({ authToken, userId, url, teamInfo, adminID }) {
   return body || {};
 }
 
-const insertTeamWrapped = limiter.wrap(insertOrganization);
+const insertTeamWrapped = limiter.wrap(insertTeam);
 /**
  * Find userID bsaed on email.
  * @param {Object} params - The parameters for the team insertion.
@@ -205,7 +205,202 @@ async function insertTeamMembers({
   return body || {};
 }
 
-const insertTeamMembersWrapped = limiter.wrap(insertOrganization);
+const insertTeamMembersWrapped = limiter.wrap(insertTeamMembers);
+
+/**
+ * Reads an organization by ID.
+ * @param {Object} params - The parameters for reading the organization.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.organizationID - The organization ID to read.
+ * @returns {Promise<Object>} A promise that resolves to the organization data.
+ */
+async function readOrganization({ authToken, userId, url, organizationID }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/readorganization`,
+    data: { organizationID },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const readOrganizationWrapped = limiter.wrap(readOrganization);
+
+/**
+ * Reads a team by ID.
+ * @param {Object} params - The parameters for reading the team.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.teamID - The team ID to read.
+ * @returns {Promise<Object>} A promise that resolves to the team data.
+ */
+async function readTeam({ authToken, userId, url, teamID }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/readteam`,
+    data: { teamID },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const readTeamWrapped = limiter.wrap(readTeam);
+
+/**
+ * Reads a team member by team ID and user ID.
+ * @param {Object} params - The parameters for reading the team member.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.teamID - The team ID.
+ * @param {string} params.userID - The user ID of the team member.
+ * @returns {Promise<Object>} A promise that resolves to the team member data.
+ */
+async function readTeamMember({ authToken, userId, url, teamID, userID }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/readteammember`,
+    data: { teamID, userID },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const readTeamMemberWrapped = limiter.wrap(readTeamMember);
+
+/**
+ * Updates an organization.
+ * @param {Object} params - The parameters for updating the organization.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.organizationID - The organization ID to update.
+ * @param {Object} params.organizationInfo - The updated organization information.
+ * @returns {Promise<Object>} A promise that resolves to the update result.
+ */
+async function updateOrganization({ authToken, userId, url, organizationID, organizationInfo }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/updateorganization`,
+    data: { organizationID, organizationInfo },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const updateOrganizationWrapped = limiter.wrap(updateOrganization);
+
+/**
+ * Updates a team.
+ * @param {Object} params - The parameters for updating the team.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.teamID - The team ID to update.
+ * @param {Object} params.teamInfo - The updated team information.
+ * @returns {Promise<Object>} A promise that resolves to the update result.
+ */
+async function updateTeam({ authToken, userId, url, teamID, teamInfo }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/updateteam`,
+    data: { teamID, teamInfo },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const updateTeamWrapped = limiter.wrap(updateTeam);
+
+/**
+ * Updates a team member.
+ * @param {Object} params - The parameters for updating the team member.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.teamID - The team ID.
+ * @param {string} params.userID - The user ID of the team member.
+ * @param {Object} params.memberInfo - The updated member information.
+ * @returns {Promise<Object>} A promise that resolves to the update result.
+ */
+async function updateTeamMember({ authToken, userId, url, teamID, userID, memberInfo }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/updateteammember`,
+    data: { teamID, userID, memberInfo },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const updateTeamMemberWrapped = limiter.wrap(updateTeamMember);
+
+/**
+ * Deletes an organization.
+ * @param {Object} params - The parameters for deleting the organization.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.organizationID - The organization ID to delete.
+ * @returns {Promise<Object>} A promise that resolves to the deletion result.
+ */
+async function deleteOrganization({ authToken, userId, url, organizationID }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/deleteorganization`,
+    data: { organizationID },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const deleteOrganizationWrapped = limiter.wrap(deleteOrganization);
+
+/**
+ * Deletes a team.
+ * @param {Object} params - The parameters for deleting the team.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.teamID - The team ID to delete.
+ * @returns {Promise<Object>} A promise that resolves to the deletion result.
+ */
+async function deleteTeam({ authToken, userId, url, teamID }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/deleteteam`,
+    data: { teamID },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const deleteTeamWrapped = limiter.wrap(deleteTeam);
+
+/**
+ * Deletes a team member.
+ * @param {Object} params - The parameters for deleting the team member.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.teamID - The team ID.
+ * @param {string} params.userID - The user ID of the team member to remove.
+ * @returns {Promise<Object>} A promise that resolves to the deletion result.
+ */
+async function deleteTeamMember({ authToken, userId, url, teamID, userID }) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/deleteteammember`,
+    data: { teamID, userID },
+  });
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const deleteTeamMemberWrapped = limiter.wrap(deleteTeamMember);
 
 /**
  * Inserts a new row into a specified Micro App.
@@ -410,5 +605,23 @@ export {
   insertTeamWrapped,
   insertTeamMembers,
   insertTeamMembersWrapped,
+  readOrganization,
+  readOrganizationWrapped,
+  readTeam,
+  readTeamWrapped,
+  readTeamMember,
+  readTeamMemberWrapped,
+  updateOrganization,
+  updateOrganizationWrapped,
+  updateTeam,
+  updateTeamWrapped,
+  updateTeamMember,
+  updateTeamMemberWrapped,
+  deleteOrganization,
+  deleteOrganizationWrapped,
+  deleteTeam,
+  deleteTeamWrapped,
+  deleteTeamMember,
+  deleteTeamMemberWrapped,
   errorResponse,
 };
