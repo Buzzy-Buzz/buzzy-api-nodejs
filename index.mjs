@@ -316,20 +316,20 @@ async function updateTeam({ authToken, userId, url, teamID, teamInfo }) {
 const updateTeamWrapped = limiter.wrap(updateTeam);
 
 /**
- * Updates a team member.
- * @param {Object} params - The parameters for updating the team member.
+ * Updates a team member's role.
+ * @param {Object} params - The parameters for updating the team member role.
  * @param {string} params.authToken - The authentication token.
  * @param {string} params.userId - The user ID.
  * @param {string} params.url - The URL to the API endpoint.
  * @param {string} params.teamID - The team ID.
  * @param {string} params.userID - The user ID of the team member.
- * @param {Object} params.memberInfo - The updated member information.
+ * @param {string} params.role - The new role for the team member ('admin' or 'member').
  * @returns {Promise<Object>} A promise that resolves to the update result.
  */
-async function updateTeamMember({ authToken, userId, url, teamID, userID, memberInfo }) {
+async function updateTeamMember({ authToken, userId, url, teamID, userID, role }) {
   const params = Object.assign(getRequestParams(authToken, userId), {
     url: `${url}/api/updateteammember`,
-    data: { teamID, userID, memberInfo },
+    data: { teamID, userID, role },
   });
   const response = await axios(params);
   const { body = {} } = response.data || {};
