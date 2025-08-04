@@ -573,6 +573,159 @@ function updateMicroAppDataRow({
 
 const updateMicroAppDataRowWrapped = limiter.wrap(updateMicroAppDataRow);
 
+/**
+ * Creates a new MicroAppChild entry.
+ * @param {Object} params - The parameters for creating the MicroAppChild.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.microAppResourceID - ID of the MicroApp resource.
+ * @param {string} params.appID - ID of the parent app item.
+ * @param {string} params.fieldID - ID of the parent field.
+ * @param {Object} params.content - Content data for the child.
+ * @returns {Promise<Object>} A promise that resolves to the created child ID.
+ */
+async function createMicroAppChild({
+  authToken,
+  userId,
+  url,
+  microAppResourceID,
+  appID,
+  fieldID,
+  content,
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/microappchild/create`,
+    data: {
+      microAppResourceID,
+      appID,
+      fieldID,
+      content,
+    },
+  });
+
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const createMicroAppChildWrapped = limiter.wrap(createMicroAppChild);
+
+/**
+ * Retrieves MicroAppChild items for a specific parent app item and field.
+ * @param {Object} params - The parameters for retrieving child items.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.appID - ID of the parent app item.
+ * @param {string} params.fieldID - ID of the parent field.
+ * @returns {Promise<Array>} A promise that resolves to an array of child items.
+ */
+async function getChildItemsByField({
+  authToken,
+  userId,
+  url,
+  appID,
+  fieldID,
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/microappchild/list?appID=${appID}&fieldID=${fieldID}`,
+  });
+
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body.childItems || [];
+}
+
+const getChildItemsByFieldWrapped = limiter.wrap(getChildItemsByField);
+
+/**
+ * Reads a specific MicroAppChild item by ID.
+ * @param {Object} params - The parameters for reading the child item.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.childID - ID of the child item to read.
+ * @returns {Promise<Object>} A promise that resolves to the child item.
+ */
+async function readMicroAppChild({
+  authToken,
+  userId,
+  url,
+  childID,
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/microappchild/read?childID=${childID}`,
+  });
+
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body.childItem || {};
+}
+
+const readMicroAppChildWrapped = limiter.wrap(readMicroAppChild);
+
+/**
+ * Updates the content of a MicroAppChild item.
+ * @param {Object} params - The parameters for updating the child item.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.childID - ID of the child item to update.
+ * @param {Object} params.content - New content data.
+ * @returns {Promise<Object>} A promise that resolves to the update result.
+ */
+async function updateMicroAppChild({
+  authToken,
+  userId,
+  url,
+  childID,
+  content,
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/microappchild/update`,
+    data: {
+      childID,
+      content,
+    },
+  });
+
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const updateMicroAppChildWrapped = limiter.wrap(updateMicroAppChild);
+
+/**
+ * Deletes a MicroAppChild item.
+ * @param {Object} params - The parameters for deleting the child item.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.childID - ID of the child item to delete.
+ * @returns {Promise<Object>} A promise that resolves to the deletion result.
+ */
+async function removeMicroAppChild({
+  authToken,
+  userId,
+  url,
+  childID,
+}) {
+  const params = Object.assign(getRequestParams(authToken, userId), {
+    url: `${url}/api/microappchild/delete`,
+    data: {
+      childID,
+    },
+  });
+
+  const response = await axios(params);
+  const { body = {} } = response.data || {};
+  return body || {};
+}
+
+const removeMicroAppChildWrapped = limiter.wrap(removeMicroAppChild);
+
 function errorResponse(err) {
   return {
     status: "error",
@@ -623,5 +776,15 @@ export {
   deleteTeamWrapped,
   deleteTeamMember,
   deleteTeamMemberWrapped,
+  createMicroAppChild,
+  createMicroAppChildWrapped,
+  getChildItemsByField,
+  getChildItemsByFieldWrapped,
+  readMicroAppChild,
+  readMicroAppChildWrapped,
+  updateMicroAppChild,
+  updateMicroAppChildWrapped,
+  removeMicroAppChild,
+  removeMicroAppChildWrapped,
   errorResponse,
 };
