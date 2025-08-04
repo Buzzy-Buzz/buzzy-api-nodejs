@@ -45,7 +45,7 @@ function login({ url, email, password }) {
   }).then((response) => {
     if (!response.data) return log("login error");
     const { data } = response;
-    return { token: data?.authToken, userId: data?.userId };
+    return { authToken: data?.authToken, userId: data?.userId };
   });
 }
 
