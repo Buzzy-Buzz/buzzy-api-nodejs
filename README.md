@@ -8,6 +8,10 @@ A Node.js client library for interacting with the Buzzy API. This package provid
 npm install buzzy-api-nodejs
 ```
 
+## Requirements
+
+- Node.js >= 20.0.0
+
 ## Quick Start
 
 ```javascript
