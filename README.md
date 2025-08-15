@@ -10,7 +10,7 @@ npm install buzzy-api-nodejs
 
 ## Requirements
 
-- Node.js >= 18.0.0
+- Node.js >= 20.0.0
 
 ## Usage
 
