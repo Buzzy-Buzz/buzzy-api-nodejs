@@ -1,10 +1,26 @@
 {
   "name": "buzzy-api-nodejs",
-  "version": "1.1.0",
-  "description": "boilerplate nodejs functions to call the Buzzy API",
+  "version": "1.1.1",
+  "description": "Node.js API client for Buzzy platform - comprehensive functions for Organizations, Teams, MicroApps, and data management",
   "main": "index.mjs",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "buzzy",
+    "api",
+    "client",
+    "rest",
+    "microapp",
+    "organizations",
+    "teams",
+    "no-code",
+    "low-code",
+    "data-management"
+  ],
   "scripts": {
-    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+    "test": "node test.mjs"
   },
   "repository": {
     "type": "git",
@@ -17,7 +33,7 @@
   },
   "homepage": "https://github.com/Buzzy-Buzz/buzzy-api-nodejs#readme",
   "dependencies": {
-    "axios": "^1.6.5",
+    "axios": "^1.11.0",
     "bottleneck": "^2.19.5"
   }
 }
