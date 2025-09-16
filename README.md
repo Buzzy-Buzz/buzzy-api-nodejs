@@ -319,6 +319,121 @@ Remove a member from a team.
 
 **Returns:** `Promise<Object>` - Removal result
 
+### Session Management
+
+#### `logout({ authToken, userId, url })`
+Logs out a user by removing their authentication token.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+
+**Returns:** `Promise<Object>` - Logout response
+
+**Example:**
+```javascript
+const result = await logout({
+  authToken: 'your-auth-token',
+  userId: 'user-id',
+  url: 'https://app.buzzy.buzz'
+});
+```
+
+### Advanced Team Management
+
+#### `enforceTeamMembership({ authToken, userId, url, userID, email, teamIDs })`
+Enforces team membership for a user by adding/removing them from specified teams.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID making the request
+- `url` (string): Buzzy instance URL
+- `userID` (string): User ID to manage (optional if email provided)
+- `email` (string): Email to manage (optional if userID provided)
+- `teamIDs` (Array): Array of team IDs to enforce membership for
+
+**Returns:** `Promise<Object>` - Enforcement response
+
+#### `getTeamMembers({ authToken, userId, url, teamIDs })`
+Gets team members for specified teams.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `teamIDs` (Array): Array of team IDs to get members for
+
+**Returns:** `Promise<Object>` - Team members response with array of user IDs
+
+### AI-Powered App Creation
+
+#### `createAppWithPrompt({ url, apiKey, userEmail, appPrompt, attachments })`
+Creates an app using AI prompt.
+
+**Parameters:**
+- `url` (string): Buzzy instance URL
+- `apiKey` (string): API key for authentication
+- `userEmail` (string): User's email
+- `appPrompt` (string): AI prompt for app creation
+- `attachments` (Array, optional): Optional attachments array
+
+**Returns:** `Promise<Object>` - App creation response with buzzID
+
+**Example:**
+```javascript
+const result = await createAppWithPrompt({
+  url: 'https://app.buzzy.buzz',
+  apiKey: 'your-api-key',
+  userEmail: 'user@example.com',
+  appPrompt: 'Create a task management app with user assignments',
+  attachments: []
+});
+```
+
+### S3 File Operations
+
+#### `copyS3File({ authToken, userId, url, sourceResourceID, destinationResourceID, fileKey, newFileKey })`
+Copies a file between S3 locations.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `sourceResourceID` (string): Source resource ID
+- `destinationResourceID` (string): Destination resource ID
+- `fileKey` (string): File key to copy
+- `newFileKey` (string, optional): Optional new file key
+
+**Returns:** `Promise<Object>` - Copy response with signed URL
+
+#### `uploadFileToS3({ authToken, userId, url, resourceID, fieldID, fileUrl, filename })`
+Uploads a file to S3 from a URL.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `resourceID` (string): Resource ID
+- `fieldID` (string): Field ID
+- `fileUrl` (string): URL of file to upload
+- `filename` (string): Filename for the upload
+
+**Returns:** `Promise<Object>` - Upload response with URL
+
+**Example:**
+```javascript
+const result = await uploadFileToS3({
+  authToken: 'your-auth-token',
+  userId: 'user-id',
+  url: 'https://app.buzzy.buzz',
+  resourceID: 'resource-id',
+  fieldID: 'field-id',
+  fileUrl: 'https://example.com/document.pdf',
+  filename: 'document.pdf'
+});
+```
+
 ## Rate Limiting
 
 All functions include built-in rate limiting to prevent API abuse. Each function has both a regular version and a "Wrapped" version with rate limiting applied.

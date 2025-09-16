@@ -1,5 +1,6 @@
 import axios from "axios";
 import Bottleneck from "bottleneck";
+import FormData from "form-data";
 
 const limiter = new Bottleneck({
   maxConcurrent: 1,
@@ -726,6 +727,183 @@ async function removeMicroAppChild({
 
 const removeMicroAppChildWrapped = limiter.wrap(removeMicroAppChild);
 
+/**
+ * Logs out a user by removing their authentication token
+ * @param {Object} params - The logout parameters
+ * @param {string} params.authToken - The authentication token
+ * @param {string} params.userId - The user ID
+ * @param {string} params.url - The URL to the API endpoint
+ * @returns {Promise<Object>} A promise that resolves to the logout response
+ */
+async function logout({ authToken, userId, url }) {
+  try {
+    const response = await axios({
+      method: "post",
+      url: `${url}/api/logout`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        authToken,
+        userId,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+/**
+ * Enforces team membership for a user
+ * @param {Object} params - The team membership parameters
+ * @param {string} params.authToken - The authentication token
+ * @param {string} params.userId - The user ID making the request
+ * @param {string} params.url - The URL to the API endpoint
+ * @param {string} params.userID - The user ID to manage (optional if email provided)
+ * @param {string} params.email - The email to manage (optional if userID provided)
+ * @param {Array} params.teamIDs - Array of team IDs to enforce membership for
+ * @returns {Promise<Object>} A promise that resolves to the enforcement response
+ */
+async function enforceTeamMembership({ authToken, userId, url, userID, email, teamIDs }) {
+  try {
+    const params = Object.assign(getRequestParams(authToken, userId), {
+      url: `${url}/api/enforceteammembership`,
+      data: {
+        userID,
+        email,
+        teamIDs,
+      },
+    });
+    const response = await axios(params);
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+/**
+ * Gets team members for specified teams
+ * @param {Object} params - The team members parameters
+ * @param {string} params.authToken - The authentication token
+ * @param {string} params.userId - The user ID
+ * @param {string} params.url - The URL to the API endpoint
+ * @param {Array} params.teamIDs - Array of team IDs to get members for
+ * @returns {Promise<Object>} A promise that resolves to the team members response
+ */
+async function getTeamMembers({ authToken, userId, url, teamIDs }) {
+  try {
+    const params = Object.assign(getRequestParams(authToken, userId), {
+      url: `${url}/api/teammembers`,
+      data: {
+        teamIDs,
+      },
+    });
+    const response = await axios(params);
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+/**
+ * Creates an app using AI prompt
+ * @param {Object} params - The app creation parameters
+ * @param {string} params.url - The URL to the API endpoint
+ * @param {string} params.apiKey - The API key for authentication
+ * @param {string} params.userEmail - The user's email
+ * @param {string} params.appPrompt - The AI prompt for app creation
+ * @param {Array} params.attachments - Optional attachments array
+ * @returns {Promise<Object>} A promise that resolves to the app creation response
+ */
+async function createAppWithPrompt({ url, apiKey, userEmail, appPrompt, attachments = [] }) {
+  try {
+    const response = await axios({
+      method: "post",
+      url: `${url}/api/createappwithprompt`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": apiKey,
+      },
+      data: {
+        userEmail,
+        appPrompt,
+        attachments,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+/**
+ * Copies a file between S3 locations
+ * @param {Object} params - The S3 copy parameters
+ * @param {string} params.authToken - The authentication token
+ * @param {string} params.userId - The user ID
+ * @param {string} params.url - The URL to the API endpoint
+ * @param {string} params.sourceResourceID - Source resource ID
+ * @param {string} params.destinationResourceID - Destination resource ID
+ * @param {string} params.fileKey - File key to copy
+ * @param {string} params.newFileKey - Optional new file key
+ * @returns {Promise<Object>} A promise that resolves to the copy response
+ */
+async function copyS3File({ authToken, userId, url, sourceResourceID, destinationResourceID, fileKey, newFileKey }) {
+  try {
+    const params = Object.assign(getRequestParams(authToken, userId), {
+      url: `${url}/api/microappchild/s3copy`,
+      data: {
+        sourceResourceID,
+        destinationResourceID,
+        fileKey,
+        newFileKey,
+      },
+    });
+    const response = await axios(params);
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+/**
+ * Uploads a file to S3 from a URL
+ * @param {Object} params - The S3 upload parameters
+ * @param {string} params.authToken - The authentication token
+ * @param {string} params.userId - The user ID
+ * @param {string} params.url - The URL to the API endpoint
+ * @param {string} params.resourceID - Resource ID
+ * @param {string} params.fieldID - Field ID
+ * @param {string} params.fileUrl - URL of file to upload
+ * @param {string} params.filename - Filename for the upload
+ * @returns {Promise<Object>} A promise that resolves to the upload response
+ */
+async function uploadFileToS3({ authToken, userId, url, resourceID, fieldID, fileUrl, filename }) {
+  try {
+    const params = Object.assign(getRequestParams(authToken, userId), {
+      url: `${url}/api/microappchild/uploadFileToS3`,
+      data: {
+        resourceID,
+        fieldID,
+        url: fileUrl,
+        filename,
+      },
+    });
+    const response = await axios(params);
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+const logoutWrapped = limiter.wrap(logout);
+const enforceTeamMembershipWrapped = limiter.wrap(enforceTeamMembership);
+const getTeamMembersWrapped = limiter.wrap(getTeamMembers);
+const createAppWithPromptWrapped = limiter.wrap(createAppWithPrompt);
+const copyS3FileWrapped = limiter.wrap(copyS3File);
+const uploadFileToS3Wrapped = limiter.wrap(uploadFileToS3);
+
 function errorResponse(err) {
   return {
     status: "error",
@@ -786,5 +964,17 @@ export {
   updateMicroAppChildWrapped,
   removeMicroAppChild,
   removeMicroAppChildWrapped,
+  logout,
+  logoutWrapped,
+  enforceTeamMembership,
+  enforceTeamMembershipWrapped,
+  getTeamMembers,
+  getTeamMembersWrapped,
+  createAppWithPrompt,
+  createAppWithPromptWrapped,
+  copyS3File,
+  copyS3FileWrapped,
+  uploadFileToS3,
+  uploadFileToS3Wrapped,
   errorResponse,
 };
