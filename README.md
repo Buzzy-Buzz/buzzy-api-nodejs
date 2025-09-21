@@ -25,7 +25,7 @@ const data = await getMicroAppData({
   token,
   userId,
   url: 'https://your-buzzy-instance.com',
-  microAppResourceID: 'your-datatable-id'
+  microAppID: 'your-datatable-id'
 });
 ```
 
