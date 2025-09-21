@@ -14,7 +14,7 @@ npm install buzzy-api-nodejs
 import { login, getMicroAppData, insertMicroAppRow } from 'buzzy-api-nodejs';
 
 // Authenticate
-const { authToken, userId } = await login({
+const { token, userId } = await login({
   url: 'https://your-buzzy-instance.com',
   email: 'your-email@example.com',
   password: 'your-password'
@@ -22,10 +22,10 @@ const { authToken, userId } = await login({
 
 // Query data
 const data = await getMicroAppData({
-  authToken,
+  token,
   userId,
   url: 'https://your-buzzy-instance.com',
-  microAppResourceID: 'your-datatable-id'
+  microAppID: 'your-datatable-id'
 });
 ```
 
@@ -41,90 +41,95 @@ Authenticate with Buzzy using email and password.
 - `email` (string): User email address
 - `password` (string): User password
 
-**Returns:** `Promise<{ authToken: string, userId: string }>`
+**Returns:** `Promise<{ token: string, userId: string }>`
 
 **Example:**
 ```javascript
-const { authToken, userId } = await login({
+const { token, userId } = await login({
   url: 'https://app.buzzy.buzz',
   email: 'user@example.com',
   password: 'password123'
 });
 ```
 
-#### `getUserID({ authToken, url, email })`
+#### `getUserID({ authToken, userId, url, email })`
 Get user ID from email address.
 
 **Parameters:**
 - `authToken` (string): Authentication token
+- `userId` (string): User ID
 - `url` (string): Buzzy instance URL
 - `email` (string): User email address
 
-**Returns:** `Promise<{ userId: string }>`
+**Returns:** `Promise<Object>` - User data object
 
 ### Data Operations
 
-#### `getMicroAppData({ authToken, userId, url, microAppResourceID, optLimit, optSkip, optSort, optQuery })`
+#### `getMicroAppData({ authToken, userId, url, microAppID, optSearchFilters, searchFilter, optViewFilters, viewFilterIsMongoQuery, optIsVectorSearch, optVectorSearchString, optLimit })`
 Query datatable rows with optional filtering and pagination.
 
 **Parameters:**
 - `authToken` (string): Authentication token
 - `userId` (string): User ID
 - `url` (string): Buzzy instance URL
-- `microAppResourceID` (string): Datatable ID
+- `microAppID` (string): Datatable ID
+- `optSearchFilters` (object, optional): Optional search filters for querying
+- `searchFilter` (object, optional): Primary search filter for querying
+- `optViewFilters` (object, optional): Optional view filters for querying
+- `viewFilterIsMongoQuery` (boolean, optional): Whether view filters use MongoDB query syntax
+- `optIsVectorSearch` (boolean, optional): Enable vector/semantic search
+- `optVectorSearchString` (string, optional): Vector search query string
 - `optLimit` (number, optional): Maximum number of rows to return
-- `optSkip` (number, optional): Number of rows to skip
-- `optSort` (object, optional): Sort criteria
-- `optQuery` (object, optional): Query filters
 
 **Returns:** `Promise<Array>` - Array of datatable rows
 
-#### `getMicroAppDataRow({ authToken, userId, url, microAppResourceID, appID })`
+#### `getMicroAppDataRow({ authToken, userId, url, rowID })`
 Get a single datatable row by ID.
 
 **Parameters:**
 - `authToken` (string): Authentication token
 - `userId` (string): User ID
 - `url` (string): Buzzy instance URL
-- `microAppResourceID` (string): Datatable ID
-- `appID` (string): Row ID
+- `rowID` (string): Row ID
 
 **Returns:** `Promise<Object>` - Single datatable row
 
-#### `insertMicroAppRow({ authToken, userId, url, microAppResourceID, content })`
+#### `insertMicroAppRow({ authToken, userId, url, microAppID, rowData, embeddingRowID, viewers, userID })`
 Create a new datatable row.
 
 **Parameters:**
 - `authToken` (string): Authentication token
 - `userId` (string): User ID
 - `url` (string): Buzzy instance URL
-- `microAppResourceID` (string): Datatable ID
-- `content` (array): Row field values
+- `microAppID` (string): Datatable ID
+- `rowData` (object): Row data object
+- `embeddingRowID` (string, optional): ID of embedding row
+- `viewers` (array, optional): Array of user IDs who can view this row
+- `userID` (string, optional): ID of the creator
 
-**Returns:** `Promise<{ appID: string }>` - Created row ID
+**Returns:** `Promise<Object>` - Created row response
 
-#### `updateMicroAppDataRow({ authToken, userId, url, microAppResourceID, appID, content })`
+#### `updateMicroAppDataRow({ authToken, userId, url, rowID, rowData, creatorID })`
 Update an existing datatable row.
 
 **Parameters:**
 - `authToken` (string): Authentication token
 - `userId` (string): User ID
 - `url` (string): Buzzy instance URL
-- `microAppResourceID` (string): Datatable ID
-- `appID` (string): Row ID to update
-- `content` (array): Updated field values
+- `rowID` (string): Row ID to update
+- `rowData` (object): Updated row data object
+- `creatorID` (string): The Buzzy User ID of the user who created the row
 
-**Returns:** `Promise<Object>` - Update result
+**Returns:** `Promise<boolean>` - Update success status
 
-#### `removeMicroAppRow({ authToken, userId, url, microAppResourceID, appID })`
+#### `removeMicroAppRow(rowID, authToken, userId, url)`
 Delete a datatable row.
 
 **Parameters:**
+- `rowID` (string): Row ID to delete
 - `authToken` (string): Authentication token
 - `userId` (string): User ID
 - `url` (string): Buzzy instance URL
-- `microAppResourceID` (string): Datatable ID
-- `appID` (string): Row ID to delete
 
 **Returns:** `Promise<Object>` - Deletion result
 
@@ -142,12 +147,12 @@ Create a new file attachment for a datatable row field.
 - `fieldID` (string): Parent field ID
 - `content` (object): File content data
 
-**Returns:** `Promise<{ childID: string }>` - Created attachment ID
+**Returns:** `Promise<Object>` - Created attachment response
 
 **Example:**
 ```javascript
 const result = await createMicroAppChild({
-  authToken,
+  token,
   userId,
   url: 'https://app.buzzy.buzz',
   microAppResourceID: 'datatable-id',
@@ -210,27 +215,37 @@ Delete a file attachment.
 
 ### Organization Management
 
-#### `getOrganizations({ authToken, userId, url })`
-Get all organizations for the authenticated user.
-
-**Returns:** `Promise<Array>` - Array of organizations
-
-#### `createOrganization({ authToken, userId, url, name, description })`
+#### `insertOrganization({ authToken, userId, url, organizationInfo })`
 Create a new organization.
 
 **Parameters:**
-- `name` (string): Organization name
-- `description` (string): Organization description
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `organizationInfo` (object): Organization information object
 
-**Returns:** `Promise<Object>` - Created organization
+**Returns:** `Promise<Object>` - Created organization response
 
-#### `updateOrganization({ authToken, userId, url, organizationID, name, description })`
+#### `readOrganization({ authToken, userId, url, organizationID })`
+Get organization details by ID.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `organizationID` (string): Organization ID to read
+
+**Returns:** `Promise<Object>` - Organization data
+
+#### `updateOrganization({ authToken, userId, url, organizationID, organizationInfo })`
 Update an existing organization.
 
 **Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
 - `organizationID` (string): Organization ID
-- `name` (string): Updated name
-- `description` (string): Updated description
+- `organizationInfo` (object): Updated organization information
 
 **Returns:** `Promise<Object>` - Update result
 
@@ -238,37 +253,47 @@ Update an existing organization.
 Delete an organization.
 
 **Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
 - `organizationID` (string): Organization ID to delete
 
 **Returns:** `Promise<Object>` - Deletion result
 
 ### Team Management
 
-#### `getTeams({ authToken, userId, url, organizationID })`
-Get all teams in an organization.
-
-**Parameters:**
-- `organizationID` (string): Organization ID
-
-**Returns:** `Promise<Array>` - Array of teams
-
-#### `createTeam({ authToken, userId, url, organizationID, name, description })`
+#### `insertTeam({ authToken, userId, url, teamInfo, adminID })`
 Create a new team.
 
 **Parameters:**
-- `organizationID` (string): Parent organization ID
-- `name` (string): Team name
-- `description` (string): Team description
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `teamInfo` (object): Team information object
+- `adminID` (string): Admin user ID for the team
 
-**Returns:** `Promise<Object>` - Created team
+**Returns:** `Promise<Object>` - Created team response
 
-#### `updateTeam({ authToken, userId, url, teamID, name, description })`
+#### `readTeam({ authToken, userId, url, teamID })`
+Get team details by ID.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `teamID` (string): Team ID to read
+
+**Returns:** `Promise<Object>` - Team data
+
+#### `updateTeam({ authToken, userId, url, teamID, teamInfo })`
 Update an existing team.
 
 **Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
 - `teamID` (string): Team ID
-- `name` (string): Updated name
-- `description` (string): Updated description
+- `teamInfo` (object): Updated team information
 
 **Returns:** `Promise<Object>` - Update result
 
@@ -276,46 +301,65 @@ Update an existing team.
 Delete a team.
 
 **Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
 - `teamID` (string): Team ID to delete
 
 **Returns:** `Promise<Object>` - Deletion result
 
 ### Team Member Management
 
-#### `getTeamMembers({ authToken, userId, url, teamID })`
-Get all members of a team.
+#### `insertTeamMembers({ authToken, userId, url, teamIDs, emails, userIDs, targetInitialApp, targetInitialScreen, targetRoute })`
+Add members to teams.
 
 **Parameters:**
-- `teamID` (string): Team ID
-
-**Returns:** `Promise<Array>` - Array of team members
-
-#### `addTeamMember({ authToken, userId, url, teamID, email, role })`
-Add a member to a team.
-
-**Parameters:**
-- `teamID` (string): Team ID
-- `email` (string): Member email address
-- `role` (string): Member role
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `teamIDs` (array): Array of team IDs to add members to
+- `emails` (array, optional): Array of email addresses of users to add
+- `userIDs` (array, optional): Array of user IDs of users to add
+- `targetInitialApp` (string, optional): Default app routing parameter
+- `targetInitialScreen` (string, optional): Default screen routing parameter
+- `targetRoute` (string, optional): Custom routing path (defaults to "app")
 
 **Returns:** `Promise<Object>` - Addition result
 
-#### `updateTeamMember({ authToken, userId, url, teamID, memberID, role })`
+#### `readTeamMember({ authToken, userId, url, teamID, userID })`
+Get team member details.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `teamID` (string): Team ID
+- `userID` (string): User ID of the team member
+
+**Returns:** `Promise<Object>` - Team member data
+
+#### `updateTeamMember({ authToken, userId, url, teamID, userID, role })`
 Update a team member's role.
 
 **Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
 - `teamID` (string): Team ID
-- `memberID` (string): Member ID
-- `role` (string): New role
+- `userID` (string): User ID of the team member
+- `role` (string): New role ('admin' or 'member')
 
 **Returns:** `Promise<Object>` - Update result
 
-#### `deleteTeamMember({ authToken, userId, url, teamID, memberID })`
+#### `deleteTeamMember({ authToken, userId, url, teamID, userID })`
 Remove a member from a team.
 
 **Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
 - `teamID` (string): Team ID
-- `memberID` (string): Member ID to remove
+- `userID` (string): User ID of the team member to remove
 
 **Returns:** `Promise<Object>` - Removal result
 
@@ -334,7 +378,7 @@ Logs out a user by removing their authentication token.
 **Example:**
 ```javascript
 const result = await logout({
-  authToken: 'your-auth-token',
+  token: 'your-auth-token',
   userId: 'user-id',
   url: 'https://app.buzzy.buzz'
 });
@@ -419,12 +463,12 @@ Uploads a file to S3 from a URL.
 - `fileUrl` (string): URL of file to upload
 - `filename` (string): Filename for the upload
 
-**Returns:** `Promise<Object>` - Upload response with URL
+**Returns:** `Promise<Object>` - Upload responsewith URL
 
 **Example:**
 ```javascript
 const result = await uploadFileToS3({
-  authToken: 'your-auth-token',
+  token: 'your-auth-token',
   userId: 'user-id',
   url: 'https://app.buzzy.buzz',
   resourceID: 'resource-id',
@@ -466,31 +510,31 @@ import {
 
 async function example() {
   // Authenticate
-  const { authToken, userId } = await login({
+  const { token, userId } = await login({
     url: 'https://app.buzzy.buzz',
     email: 'user@example.com',
     password: 'password123'
   });
 
   // Create a new row
-  const { appID } = await insertMicroAppRow({
-    authToken,
+  const result = await insertMicroAppRow({
+    authToken: token,
     userId,
     url: 'https://app.buzzy.buzz',
-    microAppResourceID: 'datatable-id',
-    content: [
-      { _id: 'field1', value: 'Sample data' },
-      { _id: 'field2', value: 'More data' }
-    ]
+    microAppID: 'datatable-id',
+    rowData: {
+      field1: 'Sample data',
+      field2: 'More data'
+    }
   });
 
   // Attach a file to the row
-  const { childID } = await createMicroAppChild({
-    authToken,
+  const childResult = await createMicroAppChild({
+    authToken: token,
     userId,
     url: 'https://app.buzzy.buzz',
     microAppResourceID: 'datatable-id',
-    appID,
+    appID: 'row-id',
     fieldID: 'attachment-field',
     content: {
       url: 'https://example.com/document.pdf',
@@ -501,15 +545,15 @@ async function example() {
 
   // List all attachments for the field
   const attachments = await getChildItemsByField({
-    authToken,
+    authToken: token,
     userId,
     url: 'https://app.buzzy.buzz',
-    appID,
+    appID: 'row-id',
     fieldID: 'attachment-field'
   });
 
-  console.log('Created row:', appID);
-  console.log('Attached file:', childID);
+  console.log('Created row:', result);
+  console.log('Attached file:', childResult);
   console.log('All attachments:', attachments);
 }
 ```
