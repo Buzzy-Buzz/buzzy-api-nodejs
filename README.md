@@ -8,6 +8,8 @@ A Node.js client library for interacting with the Buzzy API. This package provid
 npm install buzzy-api-nodejs
 ```
 
+Requires Node 22 or newer.
+
 ## Quick Start
 
 ```javascript
@@ -22,7 +24,7 @@ const { token, userId } = await login({
 
 // Query data
 const data = await getMicroAppData({
-  token,
+  authToken: token,
   userId,
   url: 'https://your-buzzy-instance.com',
   microAppID: 'your-datatable-id'
@@ -124,6 +126,8 @@ Update an existing datatable row.
 
 #### `removeMicroAppRow(rowID, authToken, userId, url)`
 Delete a datatable row.
+
+This function currently uses positional arguments for backward compatibility. Most other exports in this package accept a single object parameter.
 
 **Parameters:**
 - `rowID` (string): Row ID to delete
