@@ -107,6 +107,47 @@ async function insertOrganization({
 const insertOrganizationWrapped = limiter.wrap(insertOrganization);
 
 /**
+ * Sends a notification to a user by email.
+ * @param {Object} params - Notification parameters.
+ * @param {string} params.authToken - The authentication token.
+ * @param {string} params.userId - The user ID.
+ * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.email - Recipient email address.
+ * @param {string} [params.message] - Optional notification message.
+ * @param {number} [params.badgeCount] - Optional absolute badge count.
+ * @param {'push'|'inApp'} [params.channel] - Optional delivery channel.
+ * @returns {Promise<Object>} A promise that resolves to the notification response.
+ */
+async function sendNotification({
+  authToken,
+  userId,
+  url,
+  email,
+  message,
+  badgeCount,
+  channel,
+}) {
+  try {
+    const params = Object.assign(getRequestParams(authToken, userId), {
+      url: `${url}/api/sendnotification`,
+      data: {
+        email,
+        message,
+        badgeCount,
+        channel,
+      },
+    });
+
+    const response = await axios(params);
+    return response.data;
+  } catch (error) {
+    return errorResponse(error);
+  }
+}
+
+const sendNotificationWrapped = limiter.wrap(sendNotification);
+
+/**
  * Inserts a new team into the database.
  * @param {Object} params - The parameters for the team insertion.
  * @param {string} params.authToken - The authentication token.
@@ -970,6 +1011,8 @@ const buzzyApi = {
   enforceTeamMembershipWrapped,
   getTeamMembers,
   getTeamMembersWrapped,
+  sendNotification,
+  sendNotificationWrapped,
   createAppWithPrompt,
   createAppWithPromptWrapped,
   copyS3File,
@@ -1034,6 +1077,8 @@ export {
   enforceTeamMembershipWrapped,
   getTeamMembers,
   getTeamMembersWrapped,
+  sendNotification,
+  sendNotificationWrapped,
   createAppWithPrompt,
   createAppWithPromptWrapped,
   copyS3File,

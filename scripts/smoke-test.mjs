@@ -52,6 +52,8 @@ const expectedExports = [
   "removeMicroAppChildWrapped",
   "removeMicroAppRow",
   "removeMicroAppRowWrapped",
+  "sendNotification",
+  "sendNotificationWrapped",
   "updateMicroAppChild",
   "updateMicroAppChildWrapped",
   "updateMicroAppDataRow",

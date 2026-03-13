@@ -414,6 +414,34 @@ Gets team members for specified teams.
 
 **Returns:** `Promise<Object>` - Team members response with array of user IDs
 
+### Notifications
+
+#### `sendNotification({ authToken, userId, url, email, message, badgeCount, channel })`
+Send a notification to a user by email, with optional badge and channel controls.
+
+**Parameters:**
+- `authToken` (string): Authentication token
+- `userId` (string): User ID
+- `url` (string): Buzzy instance URL
+- `email` (string): Recipient email address
+- `message` (string, optional): Visible notification message
+- `badgeCount` (number, optional): Absolute badge value to send
+- `channel` (string, optional): Delivery mode, `push` or `inApp`; omit for default behavior
+
+**Returns:** `Promise<Object>` - Notification response
+
+**Example:**
+```javascript
+const result = await sendNotification({
+  authToken: 'your-auth-token',
+  userId: 'user-id',
+  url: 'https://your-buzzy-instance.com',
+  email: 'user@example.com',
+  badgeCount: 7,
+  channel: 'push'
+});
+```
+
 ### AI-Powered App Creation
 
 #### `createAppWithPrompt({ url, apiKey, userEmail, appPrompt, attachments })`
