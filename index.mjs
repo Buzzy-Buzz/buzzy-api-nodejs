@@ -112,6 +112,7 @@ const insertOrganizationWrapped = limiter.wrap(insertOrganization);
  * @param {string} params.authToken - The authentication token.
  * @param {string} params.userId - The user ID.
  * @param {string} params.url - The URL to the API endpoint.
+ * @param {string} params.appID - App ID the requesting user can edit.
  * @param {string} params.email - Recipient email address.
  * @param {string} [params.message] - Optional notification message.
  * @param {number} [params.badgeCount] - Optional absolute badge count.
@@ -122,6 +123,7 @@ async function sendNotification({
   authToken,
   userId,
   url,
+  appID,
   email,
   message,
   badgeCount,
@@ -131,6 +133,7 @@ async function sendNotification({
     const params = Object.assign(getRequestParams(authToken, userId), {
       url: `${url}/api/sendnotification`,
       data: {
+        appID,
         email,
         message,
         badgeCount,

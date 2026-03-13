@@ -9,6 +9,7 @@ const expectedExports = [
   "createAppWithPromptWrapped",
   "createMicroAppChild",
   "createMicroAppChildWrapped",
+  "default",
   "deleteOrganization",
   "deleteOrganizationWrapped",
   "deleteTeam",
@@ -73,7 +74,8 @@ const actualExports = Object.keys(mod).sort();
 assert.deepEqual(actualExports, expectedExports, "public export surface changed");
 
 for (const exportName of expectedExports) {
-  assert.equal(typeof mod[exportName], "function", `${exportName} should be a function`);
+  const expectedType = exportName === "default" ? "object" : "function";
+  assert.equal(typeof mod[exportName], expectedType, `${exportName} should be a ${expectedType}`);
 }
 
 console.log(`Smoke test passed for ${expectedExports.length} exports.`);

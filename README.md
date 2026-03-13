@@ -416,13 +416,14 @@ Gets team members for specified teams.
 
 ### Notifications
 
-#### `sendNotification({ authToken, userId, url, email, message, badgeCount, channel })`
+#### `sendNotification({ authToken, userId, url, appID, email, message, badgeCount, channel })`
 Send a notification to a user by email, with optional badge and channel controls.
 
 **Parameters:**
 - `authToken` (string): Authentication token
 - `userId` (string): User ID
 - `url` (string): Buzzy instance URL
+- `appID` (string): App ID the requesting user can edit
 - `email` (string): Recipient email address
 - `message` (string, optional): Visible notification message
 - `badgeCount` (number, optional): Absolute badge value to send
@@ -436,6 +437,7 @@ const result = await sendNotification({
   authToken: 'your-auth-token',
   userId: 'user-id',
   url: 'https://your-buzzy-instance.com',
+  appID: 'your-app-id',
   email: 'user@example.com',
   badgeCount: 7,
   channel: 'push'
